@@ -6,12 +6,12 @@ import re
 import pymysql
 
 connect = pymysql.Connect(
-    host='119.80.187.10',
-    port=3307,
-    user='xuehz',
-    passwd='xuehz',
-    charset='utf8',
-    database='xuehz_data'
+    host='',
+    port=,
+    user='',
+    passwd='',
+    charset='',
+    database=''
 )
 if connect:
     print('链接成功')
@@ -38,11 +38,10 @@ def get_page_index(offset,keyword):
         reponse = ur.urlopen(url)
         text = reponse.read()
         text = text.decode('utf-8')
+        print(text)
         return text
     except BaseException as e:
         print(e)
-    finally:
-        print()
 
 
 def parse_page_index(html):
@@ -62,8 +61,8 @@ def get_page_detail(url):
         print(e)
 
 
-def parse_page_detail(html,url):
-    soup = BeautifulSoup(html,'html.parser')
+def parse_page_detail(html, url):
+    soup = BeautifulSoup(html, 'html.parser')
     title = soup.select('title')[0].get_text()
     #正则表达式对象
     images_pattern = re.compile(r'var gallery = (.*?);', re.S)
@@ -86,22 +85,22 @@ def save_info_sql(info, num):
     data = (info['title'], info['url'], images_str)
     cursor.execute(sql, data)
     connect.commit()
-    print('成功插入', cursor.rowcount, '条数据')
+    # print('成功插入', cursor.rowcount, '条数据')
     save_file(info['title'], info['images'], num)
 
 
-def save_file(filename,images,num):
+def save_file(filename, images, num):
     # 保存到本地
     temp = 0
     for url in images:
         pathname = '/Users/MyMac/Desktop/图片/%sx%sy%s.jpg' % (filename, num, temp)
         ur.urlretrieve(url, pathname)
         temp += 1
-        print(pathname + '保存成功')
+        # print(pathname + '保存成功')
 
 
 def main():
-    html = get_page_index(0, '李嘉欣')
+    html = get_page_index(0, '三里屯街拍')
     create_table_db()
     x = 0
     for url in parse_page_index(html):
